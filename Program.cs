@@ -8,11 +8,11 @@ namespace StateMachine
         public static void Main(string[] args)
         {
             var gameobj = new gameObj();
+            var stateMachine = new StateMachine<gameObj>(gameobj)
+                .AddState(new TestState());
 
-            var stateMachine = new StateMachine<gameObj>(gameobj);
-            stateMachine.AddState(new TestState());
-            
             Console.WriteLine(stateMachine.GetOwner());
+            Console.WriteLine(stateMachine.GetOwner().Empty());
             stateMachine.Change<TestState>();
 
             while (true)
@@ -25,6 +25,6 @@ namespace StateMachine
 
     public class gameObj
     {
-        public void Empty() => Console.WriteLine("NONE");
+        public string Empty() => "NONE";
     }
 }

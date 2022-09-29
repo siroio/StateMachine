@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace StateMachine
 {
-    public class TestState : BaseState
+    public class TestState : IBaseState
     {
-        public override void Entry()
+        public void Entry() 
         {
             Console.WriteLine("EntryState");
         }
 
-        public override void Execute()
+        public void Execute() 
         {
             Console.WriteLine("Execution");
         }
 
-        public override void Exit() 
+        public void Exit() 
         {
             Console.WriteLine("QuitState");
         }

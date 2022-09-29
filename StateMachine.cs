@@ -4,28 +4,43 @@ using System.Linq;
 
 namespace StateMachine
 {
+    public interface IBaseState
+    {
+        public void Entry();
+        public void Execute();
+        public void Exit();
+    }
+
+    public class NullState : IBaseState
+    {
+        public void Entry() { }
+        public void Execute() { }
+        public void Exit() { }
+    }
+
     public class StateMachine<OwnerType> where OwnerType : class
     {
         private readonly OwnerType Owner;
-        private readonly HashSet<BaseState> StateTable;
-        public BaseState PrevState { get; private set; }
-        public BaseState CurrentState { get; private set; }
+        private readonly HashSet<IBaseState> StateTable;
+        public IBaseState PrevState { get; private set; }
+        public IBaseState CurrentState { get; private set; }
 
-        public StateMachine(OwnerType Owner)
+        public StateMachine(OwnerType Owner, IBaseState StartState = null)
         {
             this.Owner = Owner;
-            StateTable = new HashSet<BaseState>();
-            CurrentState = new NullState();
+            StateTable = new HashSet<IBaseState>();
+            CurrentState = StartState ?? new NullState();
         }
 
         public void Update() => CurrentState.Execute();
 
-        public void AddState(params BaseState[] state)
+        public StateMachine<OwnerType> AddState(params IBaseState[] state)
         {
             foreach (var s in state) StateTable.Add(s);
+            return this;
         }
 
-        public void Change<State>()
+        public StateMachine<OwnerType> Change<State>()
         {
             foreach (var InState in StateTable)
             {
@@ -36,9 +51,10 @@ namespace StateMachine
                 CurrentState.Entry();
                 break;
             }
+            return this;
         }
 
-        public BaseState[] GetStateList() => StateTable.ToArray();
+        public IBaseState[] GetStateList() => StateTable.ToArray();
 
         public OwnerType GetOwner() => Owner;
     }
