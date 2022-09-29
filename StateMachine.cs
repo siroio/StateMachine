@@ -55,7 +55,6 @@ namespace StateMachine
         }
 
         public IBaseState[] GetStateList() => StateTable.ToArray();
-
         public OwnerType GetOwner() => Owner;
     }
 }
