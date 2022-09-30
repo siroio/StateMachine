@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace StateMachine
 {
@@ -16,6 +18,15 @@ namespace StateMachine
         public void Entry() { }
         public void Execute() { }
         public void Exit() { }
+    }
+
+    [Serializable]
+    public class DuplicateStateException : Exception
+    {
+        public DuplicateStateException() : base(){}
+        public DuplicateStateException(string message) : base(message){}
+        public DuplicateStateException(string message, Exception exception) : base(message, exception){}
+        protected DuplicateStateException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 
     public class StateMachine<OwnerType> where OwnerType : class
@@ -36,7 +47,11 @@ namespace StateMachine
 
         public StateMachine<OwnerType> AddState(params IBaseState[] state)
         {
-            foreach (var s in state) StateTable.Add(s);
+            foreach (var s in state)
+            {
+                if (StateTable.Contains(s)) throw new DuplicateStateException("State was Duplicated.");
+                StateTable.Add(s);
+            }
             return this;
         }
 
